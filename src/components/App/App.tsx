@@ -1,45 +1,28 @@
 import React, { useReducer, useState } from 'react';
+import Input from '../Input';
 import './App.css';
 
-const formReducer = (state, event) => {
-  if(event.reset) {
-    return {
-      apple: '',
-      count: 0,
-      name: '',
-      'gift-wrap': false,
-    }
-  }
-  return {
-   ...state,
-   [event.name]: event.value
- }
-}
+
 
 function App() {
-  const [formData, setFormData] = useReducer(formReducer, {
+  const [formData, setFormData] = useState({
+    name: null,
+    'gift-wrap': false,
+    'apple': null,
     count: 100,
+
   });
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = event => {
     event.preventDefault();
     setSubmitting(true);
-
-    setTimeout(() => {
-      setSubmitting(false);
-      setFormData({
-        reset: true
-      })
-    }, 3000)
+    console.log("formData", formData)
+    setSubmitting(false);
   }
 
   const handleChange = event => {
-    const isCheckbox = event.target.type === 'checkbox';
-    setFormData({
-      name: event.target.name,
-      value: isCheckbox ? event.target.checked : event.target.value,
-    });
+    setFormData(oldState => ({...oldState, [event.target.name]: event.target.value}));
   }
 
   return(
@@ -49,7 +32,6 @@ function App() {
         <div>
           You are submitting the following:
           <ul>
-            {/* Convert formData into array with Object.entries and then map over the data converting each member of the array to an <li> element with the name and the value. */}
             {Object.entries(formData).map(([name, value]) => (
               <li key={name}><strong>{name}</strong>:{value.toString()}</li>
             ))}
@@ -57,10 +39,30 @@ function App() {
         </div>
       }
       <form onSubmit={handleSubmit}>
-        <fieldset disabled={submitting}>
+        <Input
+          submitting={submitting}
+          handleChange={handleChange}
+          value={formData.name}
+          label={'Name2'}
+          name={'name'}
+        />
+        <Input
+          submitting={submitting}
+          handleChange={handleChange}
+          value={formData.apple}
+          label={'Name3'}
+          name={'apple'}
+        />
+        {/* <fieldset disabled={submitting}>
           <label>
             <p>Name</p>
             <input name="name" onChange={handleChange} value={formData.name || ''}/>
+          </label>
+        </fieldset>
+        <fieldset disabled={submitting}>
+          <label>
+            <p>Name</p>
+            <input name="wew" onChange={handleChange} value={formData.wew || ''}/>
           </label>
         </fieldset>
         <fieldset disabled={submitting}>
@@ -87,7 +89,7 @@ function App() {
              type="checkbox"
             />
           </label>
-        </fieldset>
+        </fieldset> */}
         <button type="submit" disabled={submitting}>Submit</button>
       </form>
     </div>
